@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Movie Review</title>
+</head>
+
+<body>
+  <h1>Admin Panel</h1>
+  <input id="title" placeholder="Title"><br>
+  <input type="file" id="image" accept="image/*"><br>
+  <input id="category" placeholder="Category"><br>
+  <input id="desc" placeholder="Description"><br>
+  <button onclick="addMovie()">Add Movie</button>
+
+  <script>
+    function addMovie() {
+      if (!title.value || !image.files[0] || !category.value || !desc.value) {
+        alert('Please fill all fields and select an image');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('image', image.files[0]);
+      formData.append('title', title.value);
+      formData.append('category', category.value);
+      formData.append('description', desc.value);
+      
+      fetch('http://localhost:3000/addMovie', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        console.log('Response status:', res.status);
+        console.log('Response headers:', res.headers);
+        return res.text(); // Get as text first to debug
+      })
+      .then(text => {
+        console.log('Raw response:', text);
+        try {
+          const data = JSON.parse(text);
+          if (data.error) {
+            alert('Error: ' + data.error);
+          } else {
+            alert(data.message);
+            // Clear form
+            title.value = '';
+            image.value = '';
+            category.value = '';
+            desc.value = '';
+          }
+        } catch (e) {
+          console.error('JSON Parse Error:', e);
+          alert('Server returned non-JSON response: ' + text);
+        }
+      })
+      .catch(err => {
+        console.error('Fetch Error:', err);
+        alert('Error: ' + err.message);
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Movie Review System</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 15px;
+      background: black;
+      margin: 0;
+    }
+
+    h2 {
+      margin-top: 30px;
+      border-left: 5px solid red;
+      padding-left: 10px;
+    }
+
+    .movie-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: #222;
+      margin: 10px;
+      padding: 10px;
+      width: 220px;
+      border-radius: 10px;
+      transition: 0.3s;
+      min-height: 500px;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 100%;
+      margin: 5px 0;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      width: 100%;
+      background: red;
+      color: white;
+      border: none;
+      padding: 7px;
+      margin-top: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: darkred;
+    }
+
+    .reviews {
+      margin-top: 10px;
+      font-size: 14px;
+      background: #333;
+      padding: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎬 Movie Review System</h1>
+  
+  <div style="text-align: right; padding: 10px; background: black;">
+    <span id="userInfo"></span>
+    <button onclick="logout()" style="width: auto; margin-left: 10px;">Logout</button>
+  </div>
+
+  <div id="movies"></div>
+
+  <script>
+    // Display user info
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      document.getElementById('userInfo').textContent = `👤 ${user.username}`;
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('user');
+      location = 'login.html';
+    }
+
+    fetch('http://localhost:3000/movies')
+      .then(res => res.json())
+      .then(data => {
+
+        let categories = {};
+
+        // Group movies by category
+        data.forEach(m => {
+          if (!categories[m.category]) {
+            categories[m.category] = [];
+          }
+          categories[m.category].push(m);
+        });
+
+        let output = '';
+
+        for (let cat in categories) {
+
+          output += `<h2>${cat}</h2><div class="movie-container">`;
+
+          categories[cat].forEach(m => {
+
+            output += `
+            <div class="card">
+
+<img src="${m.image}" 
+     loading="lazy"
+     onerror="this.src='https://via.placeholder.com/200x300'">
+
+              <h3>${m.title}</h3>
+              <p>${m.description}</p>
+
+              <input id="rating${m.id}" placeholder="Rating (1-5)">
+              <input id="comment${m.id}" placeholder="Comment">
+
+              <button onclick="addReview(${m.id})">Add Review</button>
+              <button onclick="loadReviews(${m.id})">View Reviews</button>
+
+              <div id="reviews${m.id}" class="reviews"></div>
+
+            </div>
+            `;
+          });
+
+          output += `</div>`;
+        }
+
+        document.getElementById('movies').innerHTML = output;
+      });
+
+    // Add Review
+    function addReview(id) {
+
+      let user = JSON.parse(localStorage.getItem('user'));
+
+      if (!user) {
+        alert("Please login first");
+        location = 'login.html';
+        return;
+      }
+
+      let rating = document.getElementById('rating' + id).value;
+      let comment = document.getElementById('comment' + id).value;
+
+      if (!rating || !comment) {
+        alert('Please provide both rating and comment');
+        return;
+      }
+
+      if (rating < 1 || rating > 5) {
+        alert('Rating must be between 1 and 5');
+        return;
+      }
+
+      fetch('http://localhost:3000/addReview', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({
+          movie_id: id,
+          user_id: user.id,
+          rating: rating,
+          comment: comment
+        })
+      })
+        .then(res => {
+          if (res.status === 401) {
+            alert('Session expired. Please login again.');
+            localStorage.removeItem('user');
+            location = 'login.html';
+            return;
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.error) {
+            alert('Error: ' + data.error);
+          } else if (data) {
+            alert(data.message || 'Review added successfully');
+            loadReviews(id);
+            // Clear form
+            document.getElementById('rating' + id).value = '';
+            document.getElementById('comment' + id).value = '';
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+        });
+    }
+
+    // Load Reviews
+    function loadReviews(id) {
+      fetch(`http://localhost:3000/reviews/${id}`)
+        .then(res => res.json())
+        .then(data => {
+
+          let out = '';
+
+          if (data.length === 0) {
+            out = "<p>No reviews yet</p>";
+          } else {
+            data.forEach(r => {
+              out += `
+                <p>
+                  👤 ${r.username} | ⭐ ${r.rating} <br>
+                  💬 ${r.comment}
+                </p>
+              `;
+            });
+          }
+
+          document.getElementById('reviews' + id).innerHTML = out;
+        });
+    }
+  </script>
+
+</body>
+
+</html>
