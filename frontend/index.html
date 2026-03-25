@@ -135,7 +135,7 @@
             output += `
             <div class="card">
 
-<img src="${m.image}" 
+<img src="${m.image.startsWith('/uploads/') ? 'http://localhost:3000' + m.image : m.image}" 
      loading="lazy"
      onerror="this.src='https://via.placeholder.com/200x300'">
 
@@ -211,10 +211,10 @@
             alert('Error: ' + data.error);
           } else if (data) {
             alert(data.message || 'Review added successfully');
-            loadReviews(id);
             // Clear form
             document.getElementById('rating' + id).value = '';
             document.getElementById('comment' + id).value = '';
+            // Don't automatically load reviews - user must click "View Reviews"
           }
         })
         .catch(err => {
@@ -222,8 +222,17 @@
         });
     }
 
-    // Load Reviews
+    // Load Reviews (Toggle)
     function loadReviews(id) {
+      const reviewsDiv = document.getElementById('reviews' + id);
+      
+      // If reviews are already visible, hide them
+      if (reviewsDiv.innerHTML.trim() !== '') {
+        reviewsDiv.innerHTML = '';
+        return;
+      }
+      
+      // Otherwise, load and show reviews
       fetch(`http://localhost:3000/reviews/${id}`)
         .then(res => res.json())
         .then(data => {
@@ -243,7 +252,7 @@
             });
           }
 
-          document.getElementById('reviews' + id).innerHTML = out;
+          reviewsDiv.innerHTML = out;
         });
     }
   </script>
