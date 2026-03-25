@@ -184,12 +184,64 @@ app.put('/users/:id', (req, res) => {
 app.delete('/users/:id', (req, res) => {
     const userId = req.params.id;
     
-    db.query("DELETE FROM users WHERE id=?", [userId], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Failed to delete user' });
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'User not found' });
+    console.log('Attempting to delete user:', userId);
+    
+    // First check if user has reviews
+    db.query("SELECT COUNT(*) as reviewCount FROM reviews WHERE user_id=?", [userId], (err, reviewResult) => {
+        if (err) {
+            console.log('Error checking user reviews:', err);
+            return res.status(500).json({ error: 'Database error' });
         }
-        res.json({ message: 'User deleted successfully' });
+        
+        const reviewCount = reviewResult[0].reviewCount;
+        console.log('User has', reviewCount, 'reviews');
+        
+        if (reviewCount > 0) {
+            return res.status(400).json({ 
+                error: 'Cannot delete user with existing reviews. Please delete their reviews first.' 
+            });
+        }
+        
+        // Delete the user
+        db.query("DELETE FROM users WHERE id=?", [userId], (err, result) => {
+            if (err) {
+                console.log('Error deleting user:', err);
+                return res.status(500).json({ error: 'Failed to delete user: ' + err.message });
+            }
+            if (result.affectedRows === 0) {
+                console.log('User not found:', userId);
+                return res.status(404).json({ error: 'User not found' });
+            }
+            console.log('User deleted successfully:', userId);
+            res.json({ message: 'User deleted successfully' });
+        });
+    });
+});
+
+// Get all reviews with movie and user info
+app.get('/all-reviews', (req, res) => {
+    db.query(`
+        SELECT reviews.*, movies.title as movie_title, users.username
+        FROM reviews 
+        JOIN movies ON reviews.movie_id = movies.id 
+        JOIN users ON reviews.user_id = users.id 
+        ORDER BY reviews.id DESC
+    `, (err, result) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        res.json(result);
+    });
+});
+
+// Delete individual review
+app.delete('/reviews/:id', (req, res) => {
+    const reviewId = req.params.id;
+    
+    db.query("DELETE FROM reviews WHERE id=?", [reviewId], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Failed to delete review' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Review not found' });
+        }
+        res.json({ message: 'Review deleted successfully' });
     });
 });
 
