@@ -156,4 +156,41 @@ app.get('/reviews/:id', (req, res) => {
               WHERE movie_id=?`, [req.params.id], (err, result) => res.json(result));
 });
 
+// User Management CRUD Routes
+app.get('/users', (req, res) => {
+    db.query("SELECT id, username, role FROM users", (err, result) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        res.json(result);
+    });
+});
+
+app.put('/users/:id', (req, res) => {
+    const { username, role } = req.body;
+    const userId = req.params.id;
+    
+    if (!username || !role) {
+        return res.status(400).json({ error: 'Username and role are required' });
+    }
+    
+    db.query("UPDATE users SET username=?, role=? WHERE id=?", [username, role, userId], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Failed to update user' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ message: 'User updated successfully' });
+    });
+});
+
+app.delete('/users/:id', (req, res) => {
+    const userId = req.params.id;
+    
+    db.query("DELETE FROM users WHERE id=?", [userId], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Failed to delete user' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ message: 'User deleted successfully' });
+    });
+});
+
 app.listen(3000, () => console.log("Server running"));
