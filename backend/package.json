@@ -1,11 +1,23 @@
 {
   "name": "movie-review-system",
   "version": "1.0.0",
+  "description": "A modern movie review system with user management",
   "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["movie", "review", "nodejs", "express", "mysql"],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

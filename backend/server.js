@@ -6,7 +6,35 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 10000;
+
+// CORS configuration for production
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // In production, you should specify your frontend URL
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://movie-review-frontend.onrender.com',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    
+    if (process.env.NODE_ENV === 'production') {
+      return callback(null, true); // Allow all origins in production
+    } else {
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
@@ -42,20 +70,38 @@ function authenticateToken(req, res, next) {
 }
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'rootuser',
-    password: 'rootuser@123',
-    database: 'movie_db'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'rootuser',
+    password: process.env.DB_PASSWORD || 'rootuser@123',
+    database: process.env.DB_NAME || 'movie_db',
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 db.connect(err => {
-    if (err) throw err;
+    if (err) {
+        console.error('Database connection failed:', err);
+        if (process.env.NODE_ENV === 'production') {
+            process.exit(1);
+        } else {
+            throw err;
+        }
+    }
     console.log("MySQL Connected...");
 });
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+    
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+    
     db.query("SELECT * FROM users WHERE username=? AND password=?", [username, password], (err, result) => {
+        if (err) {
+            console.error('Login error:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
         if (result.length > 0) {
             // Return user info with a simple token (user id)
             res.json({
@@ -63,7 +109,7 @@ app.post('/login', (req, res) => {
                 token: result[0].id.toString() // Simple token for demo
             });
         } else {
-            res.json(null);
+            res.status(401).json({ error: 'Invalid username or password' });
         }
     });
 });
@@ -245,4 +291,7 @@ app.delete('/reviews/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => console.log("Server running"));
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});

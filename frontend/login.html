@@ -79,6 +79,7 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script>
     function toggleForm() {
       const loginForm = document.getElementById('loginForm');
@@ -108,22 +109,25 @@
         return;
       }
       
-      fetch('http://localhost:3000/login', {
+      fetch(`${window.API_CONFIG.apiBaseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            return res.json().then(data => {
+              throw new Error(data.error || 'Login failed');
+            });
+          }
+          return res.json();
+        })
         .then(data => {
-          if (data) {
-            localStorage.setItem('user', JSON.stringify(data));
-            if (data.role === 'admin') {
-              location = 'admin.html';
-            } else {
-              location = 'index.html';
-            }
+          localStorage.setItem('user', JSON.stringify(data));
+          if (data.role === 'admin') {
+            location = 'admin.html';
           } else {
-            alert("Invalid username or password");
+            location = 'index.html';
           }
         })
         .catch(err => {
@@ -146,7 +150,7 @@
         return;
       }
       
-      fetch('http://localhost:3000/signup', {
+      fetch(`${window.API_CONFIG.apiBaseUrl}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
