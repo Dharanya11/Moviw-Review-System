@@ -134,6 +134,26 @@
       color: var(--primary-color);
     }
 
+    .admin-btn {
+      background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .admin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+    }
+
     /* Main Content */
     main {
       max-width: 1400px;
@@ -650,7 +670,10 @@
           <input type="text" class="search-bar" id="searchBar" placeholder="Search movies...">
           <i class="fas fa-search search-icon"></i>
         </div>
-        
+        <button class="admin-btn" onclick="goToAdmin()" title="Admin Panel">
+          <i class="fas fa-cog"></i>
+          Admin
+        </button>
         <div class="user-info">
           <div class="user-avatar" id="userAvatar">U</div>
           <span id="userName">User</span>
@@ -1047,6 +1070,10 @@
         localStorage.removeItem('user');
         window.location.href = 'login.html';
       }
+    }
+
+    function goToAdmin() {
+      window.location.href = 'admin-premium.html';
     }
 
     // Utility functions

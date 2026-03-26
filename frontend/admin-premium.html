@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieFlix Admin - Premium Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-red: #E50914;
+      --dark-red: #b20710;
+      --darker-red: #820000;
+      --dark-bg: #0f0f0f;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --text-muted: #808080;
+      --shadow-glow: 0 0 30px rgba(229, 9, 20, 0.4);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --shadow-hover: 0 12px 48px rgba(229, 9, 20, 0.3);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--primary-red), var(--dark-red));
+      border-radius: 4px;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--primary-red);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .navbar-brand i {
+      font-size: 1.8rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .search-container {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 2rem;
+      position: relative;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 3rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar:focus {
+      outline: none;
+      border-color: var(--primary-red);
+      box-shadow: var(--shadow-glow);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .notification-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .notification-btn:hover {
+      background: var(--primary-red);
+      transform: scale(1.1);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--primary-red);
+      color: white;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .profile-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .profile-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-glow);
+      border-color: var(--primary-red);
+    }
+
+    /* Layout */
+    .admin-container {
+      display: flex;
+      min-height: calc(100vh - 73px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border);
+      padding: 2rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--primary-red), var(--dark-red));
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover {
+      color: var(--text-primary);
+      background: var(--glass-bg);
+      transform: translateX(4px);
+    }
+
+    .nav-item:hover::before {
+      transform: translateX(0);
+    }
+
+    .nav-item.active {
+      color: var(--text-primary);
+      background: linear-gradient(90deg, rgba(229, 9, 20, 0.2), transparent);
+    }
+
+    .nav-item.active::before {
+      transform: translateX(0);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .nav-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      background: radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1), transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(229, 9, 20, 0.05), transparent 50%),
+                  var(--dark-bg);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      height: 450px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&h=450&fit=crop') center/cover;
+      filter: brightness(0.3) saturate(1.2);
+      transform: scale(1.05);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-section:hover .hero-background {
+      transform: scale(1.1);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(229, 9, 20, 0.7), transparent 60%),
+                  linear-gradient(to bottom, rgba(15, 15, 15, 0.8), transparent);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 5rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 600px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--primary-red);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 25px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      animation: slideInLeft 0.6s ease;
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      animation: fadeInUp 1s ease;
+    }
+
+    .hero-button {
+      background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+      animation: fadeInUp 1.2s ease;
+    }
+
+    .hero-button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .hero-button:active {
+      transform: translateY(-1px);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-red), var(--dark-red));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-red);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .stat-icon {
+      width: 65px;
+      height: 65px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-glow);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffffff, #d0d0d0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .stat-change {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .stat-change.positive {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .stat-change.negative {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-primary);
+    }
+
+    .section-title i {
+      color: var(--primary-red);
+      font-size: 1.5rem;
+    }
+
+    .trending-label {
+      background: linear-gradient(135deg, #ff6b35, #f7931e);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      animation: flame 2s ease-in-out infinite;
+    }
+
+    @keyframes flame {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .view-all-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .view-all-btn:hover {
+      background: var(--primary-red);
+      border-color: var(--primary-red);
+      transform: translateY(-2px);
+    }
+
+    /* Movie Carousel */
+    .movie-carousel {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+    }
+
+    .movie-carousel::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .movie-card {
+      min-width: 220px;
+      background: var(--glass-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      scroll-snap-align: start;
+      position: relative;
+      border: 1px solid var(--glass-border);
+    }
+
+    .movie-card:hover {
+      transform: scale(1.08);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-red);
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 320px;
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .movie-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .movie-card:hover .movie-poster img {
+      transform: scale(1.1);
+    }
+
+    .movie-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.9));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+
+    .movie-card:hover .movie-overlay {
+      opacity: 1;
+    }
+
+    .movie-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .movie-action-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .movie-action-btn:hover {
+      background: var(--primary-red);
+      transform: scale(1.1);
+      border-color: var(--primary-red);
+    }
+
+    .movie-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: #ffd700;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .movie-info {
+      padding: 1.2rem;
+    }
+
+    .movie-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .movie-category {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .chart-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-red), var(--dark-red));
+    }
+
+    .chart-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .chart-placeholder {
+      height: 300px;
+      background: linear-gradient(135deg, rgba(229, 9, 20, 0.05), transparent);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-placeholder::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.2), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Activity Timeline */
+    .activity-timeline {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--glass-border);
+      animation: slideInUp 0.5s ease forwards;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      padding-left: 1rem;
+      margin: 0 -1rem;
+    }
+
+    @keyframes slideInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    .timeline-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-glow);
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover .timeline-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .timeline-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .star-rating {
+      display: inline-flex;
+      gap: 0.2rem;
+      margin-right: 0.5rem;
+    }
+
+    .star {
+      color: #ffd700;
+      font-size: 0.9rem;
+    }
+
+    .timeline-time {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* Add Movie Section */
+    .add-movie-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary-red);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .file-upload {
+      position: relative;
+      border: 2px dashed var(--glass-border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .file-upload:hover {
+      border-color: var(--primary-red);
+      background: rgba(229, 9, 20, 0.05);
+    }
+
+    .file-upload.dragover {
+      border-color: var(--primary-red);
+      background: rgba(229, 9, 20, 0.1);
+    }
+
+    .file-upload-icon {
+      font-size: 3rem;
+      color: var(--primary-red);
+      margin-bottom: 1rem;
+    }
+
+    .file-upload-text {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .file-upload-hint {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* User Management */
+    .user-management {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .user-table th {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.2rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--glass-border);
+    }
+
+    .user-table td {
+      padding: 1.2rem;
+      border-bottom: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+    }
+
+    .user-table tr {
+      transition: all 0.3s ease;
+    }
+
+    .user-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .edit-btn {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .edit-btn:hover {
+      background: #22c55e;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .delete-btn:hover {
+      background: #ef4444;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Loading States */
+    .skeleton {
+      background: linear-gradient(90deg, var(--glass-bg), rgba(255, 255, 255, 0.1), var(--glass-bg));
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    .loading-spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    .loading-spinner i {
+      font-size: 2rem;
+      animation: spin 1s linear infinite;
+      margin-right: 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Toast Notifications */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-width: 300px;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 2000;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-left: 4px solid #22c55e;
+    }
+
+    .toast.error {
+      border-left: 4px solid #ef4444;
+    }
+
+    .toast-icon {
+      font-size: 1.2rem;
+    }
+
+    .toast.success .toast-icon {
+      color: #22c55e;
+    }
+
+    .toast.error .toast-icon {
+      color: #ef4444;
+    }
+
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .hero-title {
+        font-size: 2.8rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+
+      .search-container {
+        display: none;
+      }
+
+      .admin-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        order: 2;
+        padding: 1rem 0;
+      }
+
+      .sidebar .nav-item {
+        padding: 0.8rem 1.5rem;
+      }
+
+      .main-content {
+        order: 1;
+        padding: 1rem;
+      }
+
+      .hero-section {
+        height: 350px;
+      }
+
+      .hero-content {
+        padding: 2rem;
+      }
+
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .movie-carousel {
+        gap: 1rem;
+      }
+
+      .movie-card {
+        min-width: 160px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .movie-card {
+        min-width: 140px;
+      }
+
+      .movie-poster {
+        height: 240px;
+      }
+
+      .table-container {
+        font-size: 0.85rem;
+      }
+
+      .user-table th,
+      .user-table td {
+        padding: 0.8rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">
+      <i class="fas fa-film"></i>
+      MovieFlix Admin
+    </a>
+    
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-bar" placeholder="Search movies, users, reviews...">
+    </div>
+    
+    <div class="navbar-actions">
+      <button class="notification-btn">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </button>
+      <div class="profile-avatar">
+        A
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="#" class="nav-item active">
+        <i class="fas fa-tachometer-alt"></i>
+        Dashboard
+      </a>
+      <a href="#add-movie" class="nav-item">
+        <i class="fas fa-plus-circle"></i>
+        Add Movies
+      </a>
+      <a href="#users" class="nav-item">
+        <i class="fas fa-users"></i>
+        Users
+      </a>
+      <a href="#reviews" class="nav-item">
+        <i class="fas fa-star"></i>
+        Reviews
+      </a>
+      <a href="#analytics" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        Analytics
+      </a>
+      <a href="index.html" class="nav-item">
+        <i class="fas fa-arrow-left"></i>
+        Back to Movies
+      </a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-background"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <span class="hero-badge">FEATURED</span>
+          <h1 class="hero-title">Blockbuster of the Week</h1>
+          <p class="hero-description">Experience the most anticipated movie with stunning visuals and captivating storyline that will keep you on the edge of your seat.</p>
+          <button class="hero-button">
+            <i class="fas fa-play"></i>
+            View Details
+          </button>
+        </div>
+      </section>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="stat-number" id="totalMovies">0</div>
+          <div class="stat-label">Total Movies</div>
+          <span class="stat-change positive">+12%</span>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-number" id="totalUsers">0</div>
+          <div class="stat-label">Total Users</div>
+          <span class="stat-change positive">+8%</span>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-number" id="totalReviews">0</div>
+          <div class="stat-label">Total Reviews</div>
+          <span class="stat-change positive">+25%</span>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-number" id="avgRating">0</div>
+          <div class="stat-label">Avg Rating</div>
+          <span class="stat-change negative">-2%</span>
+        </div>
+      </div>
+
+      <!-- Trending Movies -->
+      <section id="trending">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="trending-label">
+              <i class="fas fa-fire"></i>
+              Trending
+            </span>
+            Movies
+          </h2>
+          <button class="view-all-btn">View All</button>
+        </div>
+        
+        <div class="movie-carousel" id="trendingMovies">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            Loading movies...
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 class="chart-title">Reviews Over Time</h3>
+            <div class="chart-placeholder">
+              <i class="fas fa-chart-line fa-3x"></i>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-title">Rating Distribution</h3>
+            <div class="chart-placeholder">
+              <i class="fas fa-chart-bar fa-3x"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Activity -->
+      <section id="reviews">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-clock"></i>
+            Recent Activity
+          </h2>
+        </div>
+        
+        <div class="activity-timeline">
+          <div id="activityTimeline">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              Loading activity...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Add Movie Section -->
+      <section id="add-movie" class="add-movie-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-plus-circle"></i>
+            Add New Movie
+          </h2>
+        </div>
+
+        <form id="addMovieForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Movie Title</label>
+              <input type="text" class="form-input" id="movieTitle" placeholder="Enter movie title" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-select" id="movieCategory" required>
+                <option value="">Select category</option>
+                <option value="Action">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Horror">Horror</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Romance">Romance</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Tamil">Tamil</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Movie Poster</label>
+            <div class="file-upload" id="fileUpload">
+              <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+              <div class="file-upload-text">Drag & drop image here or click to browse</div>
+              <div class="file-upload-hint">Supports: JPG, PNG, GIF (Max 5MB)</div>
+              <input type="file" id="movieImage" accept="image/*" style="display: none;" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="movieDescription" placeholder="Enter movie description" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-plus"></i>
+            Add Movie
+          </button>
+        </form>
+      </section>
+
+      <!-- User Management -->
+      <section id="users" class="user-management">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-users"></i>
+            User Management
+          </h2>
+        </div>
+
+        <div class="table-actions">
+          <button class="action-btn edit-btn" onclick="loadUsers()">
+            <i class="fas fa-sync"></i>
+            Refresh Users
+          </button>
+          <button class="action-btn edit-btn" onclick="showAllReviews()">
+            <i class="fas fa-star"></i>
+            View All Reviews
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr>
+                <td colspan="4" class="loading-spinner">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Loading users...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <script>
+    // Admin Dashboard Class
+    class MovieFlixAdmin {
+      constructor() {
+        this.init();
+      }
+
+      async init() {
+        await this.loadStats();
+        await this.loadTrendingMovies();
+        await this.loadActivity();
+        await this.loadUsers();
+        this.setupEventListeners();
+        this.setupAnimations();
+      }
+
+      async loadStats() {
+        try {
+          const [moviesResponse, usersResponse, reviewsResponse] = await Promise.all([
+            fetch('http://localhost:3000/movies'),
+            fetch('http://localhost:3000/users'),
+            fetch('http://localhost:3000/all-reviews')
+          ]);
+
+          const movies = await moviesResponse.json();
+          const users = await usersResponse.json();
+          const reviews = await reviewsResponse.json();
+
+          this.animateNumber('totalMovies', movies.length);
+          this.animateNumber('totalUsers', users.length);
+          this.animateNumber('totalReviews', reviews.length);
+
+          if (reviews.length > 0) {
+            const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+            this.animateNumber('avgRating', avgRating.toFixed(1));
+          }
+
+        } catch (error) {
+          console.error('Error loading stats:', error);
+          this.showToast('Error loading dashboard stats', 'error');
+        }
+      }
+
+      async loadTrendingMovies() {
+        try {
+          const response = await fetch('http://localhost:3000/movies');
+          const movies = await response.json();
+          
+          const carousel = document.getElementById('trendingMovies');
+          
+          if (movies.length === 0) {
+            carousel.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-film"></i>
+                <h3>No movies yet</h3>
+                <p>Add your first movie to get started</p>
+              </div>
+            `;
+            return;
+          }
+
+          carousel.innerHTML = movies.slice(0, 8).map((movie, index) => `
+            <div class="movie-card" style="animation-delay: ${index * 0.1}s">
+              <div class="movie-poster">
+                ${movie.image ? `<img src="http://localhost:3000${movie.image}" alt="${movie.title}">` : ''}
+                <div class="movie-overlay">
+                  <div class="movie-actions">
+                    <button class="movie-action-btn" onclick="editMovie(${movie.id})" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="movie-action-btn" onclick="deleteMovie(${movie.id})" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                  <div class="movie-rating">
+                    ${this.generateStars(4.5)}
+                  </div>
+                </div>
+              </div>
+              <div class="movie-info">
+                <div class="movie-title">${movie.title}</div>
+                <div class="movie-meta">
+                  <span class="movie-category">${movie.category}</span>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+        } catch (error) {
+          console.error('Error loading movies:', error);
+          document.getElementById('trendingMovies').innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h3>Error loading movies</h3>
+              <p>Please check your connection</p>
+            </div>
+          `;
+        }
+      }
+
+      async loadActivity() {
+        try {
+          const response = await fetch('http://localhost:3000/all-reviews');
+          const reviews = await response.json();
+          
+          const timeline = document.getElementById('activityTimeline');
+          
+          if (reviews.length === 0) {
+            timeline.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <h3>No reviews yet</h3>
+                <p>Be the first to review a movie</p>
+              </div>
+            `;
+            return;
+          }
+
+          const recentReviews = reviews.slice(0, 5);
+          
+          timeline.innerHTML = recentReviews.map((review, index) => `
+            <div class="timeline-item" style="animation-delay: ${index * 0.1}s">
+              <div class="timeline-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">${review.username} reviewed "${review.movie_title}"</div>
+                <div class="timeline-description">
+                  <span class="star-rating">${this.generateStars(review.rating)}</span>
+                  "${review.comment.length > 50 ? review.comment.substring(0, 50) + '...' : review.comment}"
+                </div>
+                <div class="timeline-time">${this.getTimeAgo(new Date(review.created_at))}</div>
+              </div>
+            </div>
+          `).join('');
+
+        } catch (error) {
+          console.error('Error loading activity:', error);
+          document.getElementById('activityTimeline').innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h3>Error loading activity</h3>
+              <p>Please try again later</p>
+            </div>
+          `;
+        }
+      }
+
+      async loadUsers() {
+        try {
+          const response = await fetch('http://localhost:3000/users');
+          const users = await response.json();
+          
+          const tbody = document.getElementById('usersTableBody');
+          
+          if (users.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="4" class="empty-state">
+                  <i class="fas fa-users"></i>
+                  <h3>No users found</h3>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          tbody.innerHTML = users.map((user, index) => `
+            <tr style="animation-delay: ${index * 0.05}s">
+              <td>${user.id}</td>
+              <td>${user.username}</td>
+              <td>
+                <span style="color: ${user.role === 'admin' ? '#E50914' : '#22c55e'}">
+                  ${user.role}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit-btn" onclick="editUser(${user.id})">
+                    <i class="fas fa-edit"></i>
+                    Edit
+                  </button>
+                  <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+
+        } catch (error) {
+          console.error('Error loading users:', error);
+          document.getElementById('usersTableBody').innerHTML = `
+            <tr>
+              <td colspan="4" class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error loading users</h3>
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+        const emptyStars = 5 - fullStars - halfStar;
+        
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) {
+          stars += '<i class="fas fa-star star"></i>';
+        }
+        if (halfStar) {
+          stars += '<i class="fas fa-star-half-alt star"></i>';
+        }
+        for (let i = 0; i < emptyStars; i++) {
+          stars += '<i class="far fa-star star"></i>';
+        }
+        
+        return stars;
+      }
+
+      animateNumber(elementId, target) {
+        const element = document.getElementById(elementId);
+        const start = 0;
+        const duration = 1500;
+        const startTime = performance.now();
+
+        const updateNumber = (currentTime) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const current = Math.floor(start + (target - start) * this.easeOutQuart(progress));
+          
+          element.textContent = current;
+
+          if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+          }
+        };
+
+        requestAnimationFrame(updateNumber);
+      }
+
+      easeOutQuart(t) {
+        return 1 - Math.pow(1 - t, 4);
+      }
+
+      getTimeAgo(date) {
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+        
+        if (seconds < 60) return 'Just now';
+        if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+        if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+        if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
+        
+        return date.toLocaleDateString();
+      }
+
+      setupEventListeners() {
+        // File upload
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('movieImage');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+        
+        fileUpload.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+          fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+          e.preventDefault();
+          fileUpload.classList.remove('dragover');
+          
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            fileInput.files = files;
+            this.updateFileDisplay(files[0]);
+          }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files.length > 0) {
+            this.updateFileDisplay(e.target.files[0]);
+          }
+        });
+
+        // Add movie form
+        document.getElementById('addMovieForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.addMovie();
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-item[href^="#"]').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
+        });
+      }
+
+      updateFileDisplay(file) {
+        const fileUpload = document.getElementById('fileUpload');
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        
+        fileUpload.innerHTML = `
+          <i class="fas fa-image file-upload-icon"></i>
+          <div class="file-upload-text">${file.name}</div>
+          <div class="file-upload-hint">Size: ${fileSize} MB</div>
+        `;
+      }
+
+      async addMovie() {
+        const title = document.getElementById('movieTitle').value;
+        const category = document.getElementById('movieCategory').value;
+        const description = document.getElementById('movieDescription').value;
+        const imageFile = document.getElementById('movieImage').files[0];
+
+        if (!title || !category || !description || !imageFile) {
+          this.showToast('Please fill all fields', 'error');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('description', description);
+        formData.append('image', imageFile);
+
+        try {
+          const response = await fetch('http://localhost:3000/addMovie', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (result.error) {
+            this.showToast(result.error, 'error');
+          } else {
+            this.showToast('Movie added successfully!', 'success');
+            document.getElementById('addMovieForm').reset();
+            document.getElementById('fileUpload').innerHTML = `
+              <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+              <div class="file-upload-text">Drag & drop image here or click to browse</div>
+              <div class="file-upload-hint">Supports: JPG, PNG, GIF (Max 5MB)</div>
+            `;
+            this.loadTrendingMovies();
+            this.loadStats();
+          }
+        } catch (error) {
+          console.error('Error adding movie:', error);
+          this.showToast('Error adding movie', 'error');
+        }
+      }
+
+      setupAnimations() {
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.animationPlayState = 'running';
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+          item.style.animationPlayState = 'paused';
+          observer.observe(item);
+        });
+      }
+
+      showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} toast-icon"></i>
+          <span>${message}</span>
+        `;
+
+        document.getElementById('toastContainer').appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+    }
+
+    // Global functions
+    function editMovie(id) {
+      console.log('Edit movie:', id);
+      // Implement edit functionality
+    }
+
+    function deleteMovie(id) {
+      if (confirm('Are you sure you want to delete this movie?')) {
+        console.log('Delete movie:', id);
+        // Implement delete functionality
+      }
+    }
+
+    function editUser(id) {
+      console.log('Edit user:', id);
+      // Implement edit functionality
+    }
+
+    function deleteUser(id) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        console.log('Delete user:', id);
+        // Implement delete functionality
+      }
+    }
+
+    function showAllReviews() {
+      console.log('Show all reviews');
+      // Implement show reviews functionality
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      new MovieFlixAdmin();
+    });
+  </script>
+</body>
+</html>

@@ -223,6 +223,28 @@ app.delete('/users/:id', (req, res) => {
   });
 });
 
+// Get all reviews with movie and user info
+app.get('/all-reviews', (req, res) => {
+  db.query(`
+    SELECT reviews.*, movies.title as movie_title, users.username
+    FROM reviews 
+    JOIN movies ON reviews.movie_id = movies.id 
+    JOIN users ON reviews.user_id = users.id 
+    ORDER BY reviews.id DESC
+  `, (err, result) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(result);
+  });
+});
+
+// Delete individual review
+app.delete('/reviews/:id', (req, res) => {
+  db.query("DELETE FROM reviews WHERE id=?", [req.params.id], (err, result) => {
+    if (err) return res.status(500).json({ error: 'Delete failed' });
+    res.json({ message: 'Review deleted' });
+  });
+});
+
 
 // ================= START SERVER =================
 
