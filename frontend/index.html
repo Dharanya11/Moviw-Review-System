@@ -467,6 +467,7 @@
     @media (max-width: 480px) {
       .movie-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
 
       .action-buttons {
@@ -476,13 +477,139 @@
       .btn {
         justify-content: center;
       }
-      
+
       .movie-info {
         padding: 1rem;
       }
-      
+
+      .movie-poster {
+        height: 250px;
+      }
+
       .star-rating {
         justify-content: center;
+        gap: 0.2rem;
+      }
+
+      .star {
+        font-size: 1rem;
+      }
+
+      .comment-input {
+        min-height: 60px;
+        font-size: 0.85rem;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        border-radius: 8px;
+      }
+
+      .modal-content h2 {
+        padding: 0.8rem;
+        font-size: 1.1rem;
+      }
+
+      .close {
+        width: 28px;
+        height: 28px;
+        font-size: 20px;
+      }
+
+      .reviews-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+
+      .review-item {
+        padding: 0.8rem;
+      }
+
+      .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .footer-content {
+        padding: 1rem;
+      }
+
+      .footer-logo {
+        font-size: 1.2rem;
+      }
+
+      .footer-text {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .movie-poster {
+        height: 200px;
+      }
+
+      .movie-title {
+        font-size: 1rem;
+      }
+
+      .movie-description {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+
+      .movie-category {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+      }
+
+      .rating-display {
+        font-size: 0.8rem;
+      }
+
+      .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .user-info {
+        padding: 0.4rem 0.8rem;
+        gap: 0.6rem;
+      }
+
+      .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+
+      .userName {
+        font-size: 0.85rem;
+      }
+
+      .logout-btn {
+        font-size: 1rem;
+      }
+
+      .search-bar {
+        width: 180px;
+        font-size: 0.8rem;
+      }
+
+      .search-bar:focus {
+        width: 200px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
       }
     }
 
@@ -550,7 +677,6 @@
     </div>
   </footer>
 
-  <script src="config.js"></script>
   <script>
     // Global variables
     let user = JSON.parse(localStorage.getItem('user'));
@@ -597,7 +723,7 @@
     function loadMovies() {
       showLoading();
       
-      fetch(`${window.API_CONFIG.apiBaseUrl}/movies`)
+      fetch('http://localhost:3000/movies')
         .then(res => res.json())
         .then(movies => {
           allMovies = movies;
@@ -658,7 +784,7 @@
 
     function createMovieCard(movie) {
       const imageUrl = movie.image.startsWith('/uploads/') 
-        ? `${window.API_CONFIG.uploadUrl}${movie.image}` 
+        ? `http://localhost:3000${movie.image}` 
         : movie.image;
       
       return `
@@ -806,7 +932,7 @@
         comment: comment
       };
 
-      fetch(`${window.API_CONFIG.apiBaseUrl}/addReview`, {
+      fetch('http://localhost:3000/addReview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -861,7 +987,7 @@
       const reviewsList = document.getElementById(`reviewsList-${movieId}`);
       reviewsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
       
-      fetch(`${window.API_CONFIG.apiBaseUrl}/reviews/${movieId}`)
+      fetch(`http://localhost:3000/reviews/${movieId}`)
         .then(res => res.json())
         .then(reviews => {
           displayReviews(movieId, reviews);
@@ -902,7 +1028,7 @@
     }
 
     function updateAverageRating(movieId) {
-      fetch(`${window.API_CONFIG.apiBaseUrl}/reviews/${movieId}`)
+      fetch(`http://localhost:3000/reviews/${movieId}`)
         .then(res => res.json())
         .then(reviews => {
           if (reviews.length > 0) {
