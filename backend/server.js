@@ -12,33 +12,33 @@ app.use('/uploads', express.static('uploads'));
 
 // Create uploads directory if it doesn't exist
 if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
+    fs.mkdirSync('uploads');
 }
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
 });
 
 const upload = multer({ storage: storage });
 
 // Authorization middleware
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
-  }
-  
-  // For simplicity, we'll use the token as user_id (in production, use JWT)
-  req.user = { id: token };
-  next();
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Access token required' });
+    }
+
+    // For simplicity, we'll use the token as user_id (in production, use JWT)
+    req.user = { id: token };
+    next();
 }
 
 const db = mysql.createConnection({
@@ -49,7 +49,11 @@ const db = mysql.createConnection({
 });
 
 db.connect(err => {
-    if (err) throw err;
+    if (err) {
+        console.log("Database not connected");
+    } else {
+        console.log("Database connected");
+    }
     console.log("MySQL Connected...");
 });
 
@@ -70,28 +74,28 @@ app.post('/login', (req, res) => {
 
 app.post('/signup', (req, res) => {
     const { username, password, role = 'user' } = req.body;
-    
+
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password required' });
     }
-    
+
     // Check if user already exists
     db.query("SELECT * FROM users WHERE username=?", [username], (err, result) => {
         if (err) return res.status(500).json({ error: 'Database error' });
-        
+
         if (result.length > 0) {
             return res.status(400).json({ error: 'User already exists' });
         }
-        
+
         // Insert new user
-        db.query("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", 
+        db.query("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
             [username, password, role], (err, result) => {
                 if (err) return res.status(500).json({ error: 'Failed to create user' });
-                
+
                 // Return the created user with token
                 db.query("SELECT * FROM users WHERE id=?", [result.insertId], (err, users) => {
                     if (err) return res.status(500).json({ error: 'Database error' });
-                    
+
                     res.json({
                         ...users[0],
                         token: users[0].id.toString()
@@ -105,16 +109,16 @@ app.post('/signup', (req, res) => {
 app.post('/addMovie', upload.single('image'), (req, res) => {
     console.log('Request received:', req.body);
     console.log('File uploaded:', req.file);
-    
+
     const { title, description, category } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-    
+
     if (!title || !description || !category || !imagePath) {
         console.log('Missing fields:', { title, description, category, imagePath });
         return res.status(400).json({ error: 'All fields including image are required' });
     }
-    
-    db.query("INSERT INTO movies (title, image, description, category) VALUES (?, ?, ?, ?)", 
+
+    db.query("INSERT INTO movies (title, image, description, category) VALUES (?, ?, ?, ?)",
         [title, imagePath, description, category], (err, result) => {
             if (err) {
                 console.log('Database error:', err);
@@ -132,15 +136,15 @@ app.get('/movies', (req, res) => {
 
 app.post('/addReview', authenticateToken, (req, res) => {
     const { movie_id, user_id, rating, comment } = req.body;
-    
+
     if (!movie_id || !user_id || !rating || !comment) {
         return res.status(400).json({ error: 'All fields are required' });
     }
-    
+
     if (rating < 1 || rating > 5) {
         return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
-    
+
     db.query("INSERT INTO reviews (movie_id, user_id, rating, comment) VALUES (?, ?, ?, ?)",
         [movie_id, user_id, rating, comment], (err, result) => {
             if (err) return res.status(500).json({ error: 'Failed to add review' });
@@ -167,11 +171,11 @@ app.get('/users', (req, res) => {
 app.put('/users/:id', (req, res) => {
     const { username, role } = req.body;
     const userId = req.params.id;
-    
+
     if (!username || !role) {
         return res.status(400).json({ error: 'Username and role are required' });
     }
-    
+
     db.query("UPDATE users SET username=?, role=? WHERE id=?", [username, role, userId], (err, result) => {
         if (err) return res.status(500).json({ error: 'Failed to update user' });
         if (result.affectedRows === 0) {
@@ -183,25 +187,25 @@ app.put('/users/:id', (req, res) => {
 
 app.delete('/users/:id', (req, res) => {
     const userId = req.params.id;
-    
+
     console.log('Attempting to delete user:', userId);
-    
+
     // First check if user has reviews
     db.query("SELECT COUNT(*) as reviewCount FROM reviews WHERE user_id=?", [userId], (err, reviewResult) => {
         if (err) {
             console.log('Error checking user reviews:', err);
             return res.status(500).json({ error: 'Database error' });
         }
-        
+
         const reviewCount = reviewResult[0].reviewCount;
         console.log('User has', reviewCount, 'reviews');
-        
+
         if (reviewCount > 0) {
-            return res.status(400).json({ 
-                error: 'Cannot delete user with existing reviews. Please delete their reviews first.' 
+            return res.status(400).json({
+                error: 'Cannot delete user with existing reviews. Please delete their reviews first.'
             });
         }
-        
+
         // Delete the user
         db.query("DELETE FROM users WHERE id=?", [userId], (err, result) => {
             if (err) {
@@ -235,7 +239,7 @@ app.get('/all-reviews', (req, res) => {
 // Delete individual review
 app.delete('/reviews/:id', (req, res) => {
     const reviewId = req.params.id;
-    
+
     db.query("DELETE FROM reviews WHERE id=?", [reviewId], (err, result) => {
         if (err) return res.status(500).json({ error: 'Failed to delete review' });
         if (result.affectedRows === 0) {
@@ -243,6 +247,12 @@ app.delete('/reviews/:id', (req, res) => {
         }
         res.json({ message: 'Review deleted successfully' });
     });
+});
+// Serve frontend files
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 app.listen(3000, () => console.log("Server running"));
