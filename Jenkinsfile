@@ -26,5 +26,11 @@ pipeline {
                 sh 'docker run -d -p 3000:3000 movie-review-app'
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                sh 'docker system prune -f'
+            }
+        }
     }
 }

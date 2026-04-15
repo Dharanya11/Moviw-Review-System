@@ -1,17 +1,22 @@
-FROM node:18
+# Use multi-stage builds for backend and frontend
 
-WORKDIR /app
-
-# Copy backend package files
-COPY backend/package*.json ./backend/
-
-# Install dependencies
+# Backend Stage
+FROM node:18 AS backend
 WORKDIR /app/backend
+COPY backend/package*.json ./
 RUN npm install
+COPY backend/ .
 
-# Go back and copy full project
+# Frontend Stage
+FROM node:18 AS frontend
+WORKDIR /app/frontend
+COPY frontend/ .
+
+# Final Stage
+FROM node:18
 WORKDIR /app
-COPY . .
+COPY --from=backend /app/backend ./backend
+COPY --from=frontend /app/frontend ./frontend
 
 # Expose port
 EXPOSE 3000

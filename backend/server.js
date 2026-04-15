@@ -255,4 +255,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-app.listen(3000, () => console.log("Server running"));
+// Use environment variable for port or default to 3000
+const PORT = process.env.PORT || 3000;
+
+// Start the server
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Handle EADDRINUSE error
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Please use a different port.`);
+        process.exit(1);
+    } else {
+        throw err;
+    }
+});
