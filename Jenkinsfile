@@ -8,7 +8,6 @@ pipeline {
                 bat 'docker build -t movie-review-app .'
             }
         }
-
 stage('Run Docker Container') {
     steps {
         bat 'docker stop movie || exit 0'
