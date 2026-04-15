@@ -42,7 +42,7 @@ function authenticateToken(req, res, next) {
 }
 
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: 'host.docker.internal',
     user: 'rootuser',
     password: 'rootuser@123',
     database: 'movie_db'
@@ -54,17 +54,21 @@ db.connect(err => {
     } else {
         console.log("Database connected");
     }
-    console.log("MySQL Connected...");
 });
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+
     db.query("SELECT * FROM users WHERE username=? AND password=?", [username, password], (err, result) => {
-        if (result.length > 0) {
-            // Return user info with a simple token (user id)
+        if (err) {
+            console.log(err);
+            return res.json(null);
+        }
+
+        if (result && result.length > 0) {
             res.json({
                 ...result[0],
-                token: result[0].id.toString() // Simple token for demo
+                token: result[0].id.toString()
             });
         } else {
             res.json(null);
@@ -76,30 +80,32 @@ app.post('/signup', (req, res) => {
     const { username, password, role = 'user' } = req.body;
 
     if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password required' });
+        return res.json({ error: 'Username and password required' });
     }
 
-    // Check if user already exists
     db.query("SELECT * FROM users WHERE username=?", [username], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-
-        if (result.length > 0) {
-            return res.status(400).json({ error: 'User already exists' });
+        if (err) {
+            console.log(err);
+            return res.json({ error: 'Database error' });
         }
 
-        // Insert new user
-        db.query("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-            [username, password, role], (err, result) => {
-                if (err) return res.status(500).json({ error: 'Failed to create user' });
+        if (result && result.length > 0) {
+            return res.json({ error: 'User already exists' });
+        }
 
-                // Return the created user with token
-                db.query("SELECT * FROM users WHERE id=?", [result.insertId], (err, users) => {
-                    if (err) return res.status(500).json({ error: 'Database error' });
+        db.query(
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            [username, password, role],
+            (err, result) => {
 
-                    res.json({
-                        ...users[0],
-                        token: users[0].id.toString()
-                    });
+                if (err) {
+                    console.log(err);
+                    return res.json({ error: 'Signup failed' });
+                }
+
+                res.json({
+                    message: "Signup successful",
+                    userId: result.insertId
                 });
             }
         );
@@ -131,7 +137,13 @@ app.post('/addMovie', upload.single('image'), (req, res) => {
 });
 
 app.get('/movies', (req, res) => {
-    db.query("SELECT * FROM movies", (err, result) => res.json(result));
+    db.query("SELECT * FROM movies", (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.json([]); // prevent crash
+        }
+        res.json(result);
+    });
 });
 
 app.post('/addReview', authenticateToken, (req, res) => {
