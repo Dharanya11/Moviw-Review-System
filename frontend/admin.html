@@ -395,16 +395,10 @@
 <body>
   <div class="header">
     <div style="display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; gap: 1rem;">
-        <button class="btn-back" onclick="goBack()">
-          <i class="fas fa-arrow-left"></i>
-          Back to Movies
-        </button>
-        <button class="btn-back" onclick="goToDashboard()" style="background: #28a745;">
-          <i class="fas fa-tachometer-alt"></i>
-          Dashboard
-        </button>
-      </div>
+      <button class="btn-back" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Movies
+      </button>
       <h1>🎬 Admin Panel</h1>
       <div></div> <!-- Spacer for center alignment -->
     </div>
@@ -493,10 +487,6 @@
     // Back button function
     function goBack() {
       window.location.href = 'index.html';
-    }
-
-    function goToDashboard() {
-      window.location.href = 'admin-premium.html';
     }
 
     // Reviews Modal Functions

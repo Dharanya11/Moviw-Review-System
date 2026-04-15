@@ -164,6 +164,22 @@
           alert('Signup error: ' + err.message);
         });
     }
+
+    function getUserReviews(userId) {
+      fetch(`http://localhost:3000/reviews/user/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+          } else {
+            console.log('User Reviews:', data);
+            // You can display the reviews on the page here
+          }
+        })
+        .catch(err => {
+          alert('Error fetching user reviews: ' + err.message);
+        });
+    }
   </script>
 </body>
 

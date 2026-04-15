@@ -134,26 +134,6 @@
       color: var(--primary-color);
     }
 
-    .admin-btn {
-      background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-      font-weight: 500;
-    }
-
-    .admin-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
-    }
-
     /* Main Content */
     main {
       max-width: 1400px;
@@ -259,6 +239,16 @@
       color: #ffd700;
       font-size: 0.9rem;
       font-weight: 500;
+    }
+
+    .avg-rating-stars {
+      display: flex;
+      gap: 0.1rem;
+    }
+
+    .avg-rating-stars .star {
+      font-size: 0.8rem;
+      color: #ffd700;
     }
 
     .movie-description {
@@ -670,10 +660,7 @@
           <input type="text" class="search-bar" id="searchBar" placeholder="Search movies...">
           <i class="fas fa-search search-icon"></i>
         </div>
-        <button class="admin-btn" onclick="goToAdmin()" title="Admin Panel">
-          <i class="fas fa-cog"></i>
-          Admin
-        </button>
+        
         <div class="user-info">
           <div class="user-avatar" id="userAvatar">U</div>
           <span id="userName">User</span>
@@ -751,6 +738,11 @@
         .then(movies => {
           allMovies = movies;
           displayMovies(movies);
+          
+          // Initialize average ratings for all movies
+          movies.forEach(movie => {
+            updateAverageRating(movie.id);
+          });
         })
         .catch(err => {
           console.error('Error loading movies:', err);
@@ -826,7 +818,7 @@
             <div class="movie-meta">
               <span class="movie-category">${movie.category}</span>
               <div class="rating-display">
-                <i class="fas fa-star"></i>
+                <div id="avgRatingStars-${movie.id}" class="avg-rating-stars"></div>
                 <span id="avgRating-${movie.id}">0.0</span>
               </div>
             </div>
@@ -1057,8 +1049,35 @@
           if (reviews.length > 0) {
             const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
             const ratingElement = document.getElementById(`avgRating-${movieId}`);
+            const starsElement = document.getElementById(`avgRatingStars-${movieId}`);
+            
             if (ratingElement) {
               ratingElement.textContent = avgRating.toFixed(1);
+            }
+            
+            if (starsElement) {
+              // Display star rating for average
+              const fullStars = Math.floor(avgRating);
+              const hasHalfStar = avgRating % 1 >= 0.5;
+              let starsHTML = '';
+              
+              for (let i = 1; i <= 5; i++) {
+                if (i <= fullStars) {
+                  starsHTML += '<i class="fas fa-star star"></i>';
+                } else if (i === fullStars + 1 && hasHalfStar) {
+                  starsHTML += '<i class="fas fa-star-half-alt star"></i>';
+                } else {
+                  starsHTML += '<i class="far fa-star star"></i>';
+                }
+              }
+              
+              starsElement.innerHTML = starsHTML;
+            }
+          } else {
+            // Show empty stars when no reviews
+            const starsElement = document.getElementById(`avgRatingStars-${movieId}`);
+            if (starsElement) {
+              starsElement.innerHTML = '<i class="far fa-star star"></i><i class="far fa-star star"></i><i class="far fa-star star"></i><i class="far fa-star star"></i><i class="far fa-star star"></i>';
             }
           }
         })
@@ -1070,10 +1089,6 @@
         localStorage.removeItem('user');
         window.location.href = 'login.html';
       }
-    }
-
-    function goToAdmin() {
-      window.location.href = 'admin-premium.html';
     }
 
     // Utility functions
