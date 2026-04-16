@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Admin Panel</title>
+  <title>ADMIN PANEL</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
       margin: 0;
       padding: 20px;
     }
-    
+
     .btn-back {
       background: var(--primary-color);
       color: white;
@@ -25,49 +25,51 @@
       gap: 0.5rem;
       transition: all 0.3s ease;
     }
-    
+
     .btn-back:hover {
       background: #f40612;
       transform: translateY(-2px);
     }
-    
+
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
-    
-    .header > div {
+
+    .header>div {
       display: flex;
       justify-content: space-between;
       align-items: center;
       max-width: 1400px;
       margin: 0 auto;
     }
-    
+
     .container {
       display: flex;
       gap: 30px;
       max-width: 1400px;
       margin: 0 auto;
     }
-    
+
     .section {
       background: #222;
       padding: 25px;
       border-radius: 10px;
       flex: 1;
     }
-    
-    h1, h2 {
+
+    h1,
+    h2 {
       color: #ff4444;
       margin-bottom: 20px;
     }
-    
+
     .form-group {
       margin-bottom: 15px;
     }
-    
-    input, select {
+
+    input,
+    select {
       width: 100%;
       padding: 10px;
       border-radius: 5px;
@@ -76,7 +78,7 @@
       color: white;
       box-sizing: border-box;
     }
-    
+
     button {
       width: 100%;
       background: #ff4444;
@@ -87,60 +89,61 @@
       border-radius: 5px;
       margin-top: 10px;
     }
-    
+
     button:hover {
       background: #cc3333;
     }
-    
+
     .user-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
-    
-    .user-table th, .user-table td {
+
+    .user-table th,
+    .user-table td {
       padding: 12px;
       text-align: left;
       border-bottom: 1px solid #444;
     }
-    
+
     .user-table th {
       background: #333;
       font-weight: bold;
     }
-    
+
     .user-table tr:hover {
       background: #333;
     }
-    
+
     .action-buttons {
       display: flex;
       gap: 5px;
     }
-    
+
     .btn-small {
       padding: 5px 10px;
       font-size: 12px;
       width: auto;
       margin: 0;
     }
-    
+
     .btn-edit {
       background: #4CAF50;
     }
-    
+
     .btn-delete {
       background: #f44336;
     }
-    
+
     .btn-edit:hover {
       background: #45a049;
     }
-    
+
     .btn-delete:hover {
       background: #da190b;
     }
-    
+
     .modal {
       display: none;
       position: fixed;
@@ -149,10 +152,10 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.8);
+      background-color: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(5px);
     }
-    
+
     .modal-content {
       background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
       margin: 3% auto;
@@ -163,21 +166,22 @@
       max-width: 900px;
       max-height: 85vh;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       animation: modalSlideIn 0.3s ease;
     }
-    
+
     @keyframes modalSlideIn {
       from {
         transform: translateY(-50px);
         opacity: 0;
       }
+
       to {
         transform: translateY(0);
         opacity: 1;
       }
     }
-    
+
     .modal-content h2 {
       background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
       color: white;
@@ -190,7 +194,7 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .close {
       color: white;
       float: right;
@@ -207,182 +211,182 @@
       align-items: center;
       justify-content: center;
     }
-    
+
     .close:hover,
     .close:focus {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
       transform: rotate(90deg);
     }
-    
+
     /* Mobile Responsive Design */
     @media (max-width: 768px) {
       body {
         padding: 10px;
       }
-      
-      .header > div {
+
+      .header>div {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
       }
-      
+
       .btn-back {
         order: 3;
         width: 100%;
         justify-content: center;
       }
-      
+
       .container {
         flex-direction: column;
         gap: 20px;
       }
-      
+
       .section {
         padding: 20px;
       }
-      
+
       .modal-content {
         width: 95%;
         margin: 5% auto;
         max-height: 90vh;
         border-radius: 12px;
       }
-      
+
       .modal-content h2 {
         padding: 1rem;
         font-size: 1.2rem;
       }
-      
+
       .close {
         width: 28px;
         height: 28px;
         font-size: 24px;
       }
-      
+
       .user-table {
         font-size: 0.9rem;
       }
-      
+
       .user-table th,
       .user-table td {
         padding: 8px;
       }
-      
+
       .btn-back {
         padding: 0.6rem 1rem;
         font-size: 0.8rem;
       }
-      
+
       .form-group input,
       .form-group select,
       .form-group textarea {
         font-size: 0.9rem;
       }
-      
+
       button {
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
       }
     }
-    
+
     @media (max-width: 480px) {
       .header h1 {
         font-size: 1.5rem;
       }
-      
+
       .section {
         padding: 15px;
       }
-      
+
       .section h2 {
         font-size: 1.2rem;
       }
-      
+
       .user-table {
         font-size: 0.8rem;
       }
-      
+
       .user-table th,
       .user-table td {
         padding: 6px 4px;
       }
-      
+
       .modal-content {
         width: 98%;
         margin: 2% auto;
         border-radius: 8px;
       }
-      
+
       .modal-content h2 {
         padding: 0.8rem;
         font-size: 1.1rem;
       }
-      
+
       /* Stack buttons on mobile */
-      .header > div > div {
+      .header>div>div {
         width: 100%;
       }
-      
+
       /* Adjust review modal for mobile */
       .modal-content[style*="max-width: 800px"] {
         max-width: 95% !important;
       }
-      
+
       /* Mobile review cards */
       div[style*="padding: 1.5rem"] {
         padding: 1rem !important;
       }
-      
+
       div[style*="display: flex; justify-content: space-between"] {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start !important;
       }
-      
+
       div[style*="display: flex; align-items: center; gap: 0.8rem"] {
         flex-wrap: wrap;
         gap: 0.5rem;
       }
-      
+
       div[style*="width: 40px; height: 40px"] {
         width: 32px !important;
         height: 32px !important;
         font-size: 0.8rem !important;
       }
-      
+
       button[style*="padding: 0.5rem 0.8rem"] {
         padding: 0.4rem 0.6rem !important;
         font-size: 0.7rem !important;
       }
     }
-    
+
     /* Very small screens */
     @media (max-width: 360px) {
       body {
         padding: 5px;
       }
-      
+
       .header h1 {
         font-size: 1.3rem;
       }
-      
+
       .section {
         padding: 10px;
       }
-      
+
       .section h2 {
         font-size: 1.1rem;
       }
-      
+
       .user-table {
         font-size: 0.7rem;
       }
-      
+
       .user-table th,
       .user-table td {
         padding: 4px 2px;
       }
-      
+
       /* Hide some columns on very small screens */
       .user-table th:nth-child(1),
       .user-table td:nth-child(1) {
@@ -403,7 +407,7 @@
       <div></div> <!-- Spacer for center alignment -->
     </div>
   </div>
-  
+
   <div class="container">
     <!-- Add Movie Section -->
     <div class="section">
@@ -422,7 +426,7 @@
       </div>
       <button onclick="addMovie()">Add Movie</button>
     </div>
-    
+
     <!-- User Management Section -->
     <div class="section">
       <h2>User Management</h2>
@@ -430,7 +434,7 @@
         <button onclick="loadUsers()">Refresh Users</button>
         <button onclick="showAllReviews()" style="background: #ff4444;">View All Reviews</button>
       </div>
-      
+
       <table class="user-table" id="userTable">
         <thead>
           <tr>
@@ -445,7 +449,7 @@
       </table>
     </div>
   </div>
-  
+
   <!-- Edit User Modal -->
   <div id="editUserModal" class="modal">
     <div class="modal-content">
@@ -454,7 +458,7 @@
       <div class="form-group">
         <input type="hidden" id="editUserId">
         <input type="text" id="editUsername" placeholder="Username">
-           </div>
+      </div>
       <div class="form-group">
         <select id="editRole">
           <option value="user">User</option>
@@ -464,7 +468,7 @@
       <button onclick="updateUser()">Update User</button>
     </div>
   </div>
-  
+
   <!-- Reviews Modal -->
   <div id="reviewsModal" class="modal">
     <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
@@ -480,7 +484,7 @@
 
   <script>
     // Load users on page load
-    window.onload = function() {
+    window.onload = function () {
       loadUsers();
     };
 
@@ -507,21 +511,21 @@
         })
         .catch(err => {
           console.error('Error loading reviews:', err);
-          document.getElementById('reviewsModalContent').innerHTML = 
+          document.getElementById('reviewsModalContent').innerHTML =
             '<p style="color: #ff4444;">Failed to load reviews</p>';
         });
     }
 
     function displayAllReviews(reviews) {
       const content = document.getElementById('reviewsModalContent');
-      
+
       if (reviews.length === 0) {
         content.innerHTML = '<p style="text-align: center; color: #ccc; padding: 2rem;">No reviews found</p>';
         return;
       }
 
       let html = '<div style="max-height: 60vh; overflow-y: auto; padding: 0.5rem;">';
-      
+
       // Group reviews by movie
       const reviewsByMovie = {};
       reviews.forEach(review => {
@@ -538,7 +542,7 @@
               <i class="fas fa-film"></i> ${movieTitle}
             </h3>
         `;
-        
+
         reviewsByMovie[movieTitle].forEach((review, index) => {
           html += `
             <div style="background: #333; padding: 1.2rem; margin-bottom: ${index < reviewsByMovie[movieTitle].length - 1 ? '1rem' : '0'}; border-radius: 8px; position: relative; border-left: 3px solid #ff4444;">
@@ -570,10 +574,10 @@
             </div>
           `;
         });
-        
+
         html += '</div>';
       }
-      
+
       html += '</div>';
       content.innerHTML = html;
     }
@@ -583,19 +587,19 @@
         fetch(`http://localhost:3000/reviews/${reviewId}`, {
           method: 'DELETE'
         })
-        .then(res => res.json())
-        .then(data => {
-          if (data.error) {
-            alert('Error: ' + data.error);
-          } else {
-            alert('Review deleted successfully');
-            loadAllReviews(); // Refresh reviews
-          }
-        })
-        .catch(err => {
-          console.error('Error deleting review:', err);
-          alert('Failed to delete review');
-        });
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) {
+              alert('Error: ' + data.error);
+            } else {
+              alert('Review deleted successfully');
+              loadAllReviews(); // Refresh reviews
+            }
+          })
+          .catch(err => {
+            console.error('Error deleting review:', err);
+            alert('Failed to delete review');
+          });
       }
     }
 
@@ -605,45 +609,45 @@
         alert('Please fill all fields and select an image');
         return;
       }
-      
+
       const formData = new FormData();
       formData.append('image', image.files[0]);
       formData.append('title', title.value);
       formData.append('category', category.value);
       formData.append('description', desc.value);
-      
+
       fetch('http://localhost:3000/addMovie', {
         method: 'POST',
         body: formData
       })
-      .then(res => {
-        console.log('Response status:', res.status);
-        console.log('Response headers:', res.headers);
-        return res.text(); // Get as text first to debug
-      })
-      .then(text => {
-        console.log('Raw response:', text);
-        try {
-          const data = JSON.parse(text);
-          if (data.error) {
-            alert('Error: ' + data.error);
-          } else {
-            alert(data.message);
-            // Clear form
-            title.value = '';
-            image.value = '';
-            category.value = '';
-            desc.value = '';
+        .then(res => {
+          console.log('Response status:', res.status);
+          console.log('Response headers:', res.headers);
+          return res.text(); // Get as text first to debug
+        })
+        .then(text => {
+          console.log('Raw response:', text);
+          try {
+            const data = JSON.parse(text);
+            if (data.error) {
+              alert('Error: ' + data.error);
+            } else {
+              alert(data.message);
+              // Clear form
+              title.value = '';
+              image.value = '';
+              category.value = '';
+              desc.value = '';
+            }
+          } catch (e) {
+            console.error('JSON Parse Error:', e);
+            alert('Server returned non-JSON response: ' + text);
           }
-        } catch (e) {
-          console.error('JSON Parse Error:', e);
-          alert('Server returned non-JSON response: ' + text);
-        }
-      })
-      .catch(err => {
-        console.error('Fetch Error:', err);
-        alert('Error: ' + err.message);
-      });
+        })
+        .catch(err => {
+          console.error('Fetch Error:', err);
+          alert('Error: ' + err.message);
+        });
     }
 
     // User Management Functions
@@ -653,7 +657,7 @@
         .then(data => {
           const tbody = document.getElementById('userTableBody');
           tbody.innerHTML = '';
-          
+
           data.forEach(user => {
             const row = `
               <tr>
@@ -692,58 +696,58 @@
       const id = document.getElementById('editUserId').value;
       const username = document.getElementById('editUsername').value;
       const role = document.getElementById('editRole').value;
-      
+
       if (!username) {
         alert('Username is required');
         return;
       }
-      
+
       fetch(`http://localhost:3000/users/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, role })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          alert('Error: ' + data.error);
-        } else {
-          alert('User updated successfully');
-          closeEditModal();
-          loadUsers();
-        }
-      })
-      .catch(err => {
-        console.error('Error updating user:', err);
-        alert('Failed to update user');
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+          } else {
+            alert('User updated successfully');
+            closeEditModal();
+            loadUsers();
+          }
+        })
+        .catch(err => {
+          console.error('Error updating user:', err);
+          alert('Failed to update user');
+        });
     }
 
     function deleteUser(id) {
       if (confirm('Are you sure you want to delete this user?')) {
         console.log('Attempting to delete user:', id);
-        
+
         fetch(`http://localhost:3000/users/${id}`, {
           method: 'DELETE'
         })
-        .then(res => {
-          console.log('Delete response status:', res.status);
-          return res.json();
-        })
-        .then(data => {
-          console.log('Delete response data:', data);
-          
-          if (data.error) {
-            alert('Error: ' + data.error);
-          } else {
-            alert('User deleted successfully');
-            loadUsers();
-          }
-        })
-        .catch(err => {
-          console.error('Error deleting user:', err);
-          alert('Failed to delete user: ' + err.message);
-        });
+          .then(res => {
+            console.log('Delete response status:', res.status);
+            return res.json();
+          })
+          .then(data => {
+            console.log('Delete response data:', data);
+
+            if (data.error) {
+              alert('Error: ' + data.error);
+            } else {
+              alert('User deleted successfully');
+              loadUsers();
+            }
+          })
+          .catch(err => {
+            console.error('Error deleting user:', err);
+            alert('Failed to delete user: ' + err.message);
+          });
       }
     }
   </script>
