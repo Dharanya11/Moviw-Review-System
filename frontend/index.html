@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movie Review System</title>
+  <title>MOVIE REVIEW SYSTEM</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
@@ -35,7 +36,7 @@
 
     /* Header/Navbar */
     header {
-      background: linear-gradient(180deg, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0.7) 100%);
+      background: linear-gradient(180deg, rgba(20, 20, 20, 0.9) 0%, rgba(20, 20, 20, 0.7) 100%);
       backdrop-filter: blur(10px);
       padding: 1rem 0;
       position: sticky;
@@ -636,8 +637,13 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     /* Smooth Scroll */
@@ -654,13 +660,13 @@
         <i class="fas fa-film"></i>
         MovieFlix
       </a>
-      
+
       <div class="nav-right">
         <div class="search-container">
           <input type="text" class="search-bar" id="searchBar" placeholder="Search movies...">
           <i class="fas fa-search search-icon"></i>
         </div>
-        
+
         <div class="user-info">
           <div class="user-avatar" id="userAvatar">U</div>
           <span id="userName">User</span>
@@ -694,17 +700,17 @@
     let currentRating = {};
 
     // Initialize app
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       initializeApp();
     });
 
     function initializeApp() {
       // Setup user info
       setupUserInfo();
-      
+
       // Setup search functionality
       setupSearch();
-      
+
       // Load movies
       loadMovies();
     }
@@ -713,7 +719,7 @@
       if (user) {
         const userName = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
-        
+
         userName.textContent = user.username;
         userAvatar.textContent = user.username.charAt(0).toUpperCase();
       } else {
@@ -724,7 +730,7 @@
 
     function setupSearch() {
       const searchBar = document.getElementById('searchBar');
-      searchBar.addEventListener('input', function(e) {
+      searchBar.addEventListener('input', function (e) {
         const searchTerm = e.target.value.toLowerCase();
         filterMovies(searchTerm);
       });
@@ -732,13 +738,13 @@
 
     function loadMovies() {
       showLoading();
-      
+
       fetch('http://localhost:3000/movies')
         .then(res => res.json())
         .then(movies => {
           allMovies = movies;
           displayMovies(movies);
-          
+
           // Initialize average ratings for all movies
           movies.forEach(movie => {
             updateAverageRating(movie.id);
@@ -752,7 +758,7 @@
 
     function displayMovies(movies) {
       const container = document.getElementById('movies');
-      
+
       if (movies.length === 0) {
         container.innerHTML = `
           <div class="no-reviews">
@@ -774,7 +780,7 @@
       });
 
       let output = '';
-      
+
       for (const category in categories) {
         output += `
           <section>
@@ -783,11 +789,11 @@
             </div>
             <div class="movie-grid">
         `;
-        
+
         categories[category].forEach(movie => {
           output += createMovieCard(movie);
         });
-        
+
         output += `
             </div>
           </section>
@@ -798,10 +804,10 @@
     }
 
     function createMovieCard(movie) {
-      const imageUrl = movie.image.startsWith('/uploads/') 
-        ? `http://localhost:3000${movie.image}` 
+      const imageUrl = movie.image.startsWith('/uploads/')
+        ? `http://localhost:3000${movie.image}`
         : movie.image;
-      
+
       return `
         <div class="movie-card" data-movie-id="${movie.id}">
           <div class="movie-poster-container">
@@ -911,13 +917,13 @@
         displayMovies(allMovies);
         return;
       }
-      
-      const filtered = allMovies.filter(movie => 
+
+      const filtered = allMovies.filter(movie =>
         movie.title.toLowerCase().includes(searchTerm) ||
         movie.description.toLowerCase().includes(searchTerm) ||
         movie.category.toLowerCase().includes(searchTerm)
       );
-      
+
       displayMovies(filtered);
     }
 
@@ -955,41 +961,41 @@
         },
         body: JSON.stringify(reviewData)
       })
-      .then(res => {
-        if (res.status === 401) {
-          alert('Session expired. Please login again.');
-          localStorage.removeItem('user');
-          window.location.href = 'login.html';
-          return;
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data && data.error) {
-          alert('Error: ' + data.error);
-        } else {
-          // Reset form
-          currentRating[movieId] = 0;
-          updateStarDisplay(movieId, 0);
-          document.getElementById(`comment-${movieId}`).value = '';
-          
-          // Show success message
-          showSuccess('Review added successfully!');
-          
-          // Update average rating
-          updateAverageRating(movieId);
-        }
-      })
-      .catch(err => {
-        console.error('Error adding review:', err);
-        alert('Failed to add review');
-      });
+        .then(res => {
+          if (res.status === 401) {
+            alert('Session expired. Please login again.');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+            return;
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.error) {
+            alert('Error: ' + data.error);
+          } else {
+            // Reset form
+            currentRating[movieId] = 0;
+            updateStarDisplay(movieId, 0);
+            document.getElementById(`comment-${movieId}`).value = '';
+
+            // Show success message
+            showSuccess('Review added successfully!');
+
+            // Update average rating
+            updateAverageRating(movieId);
+          }
+        })
+        .catch(err => {
+          console.error('Error adding review:', err);
+          alert('Failed to add review');
+        });
     }
 
     function toggleReviews(movieId) {
       const reviewsSection = document.getElementById(`reviews-${movieId}`);
       const isVisible = reviewsSection.style.display !== 'none';
-      
+
       if (isVisible) {
         reviewsSection.style.display = 'none';
       } else {
@@ -1001,7 +1007,7 @@
     function loadReviews(movieId) {
       const reviewsList = document.getElementById(`reviewsList-${movieId}`);
       reviewsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
-      
+
       fetch(`http://localhost:3000/reviews/${movieId}`)
         .then(res => res.json())
         .then(reviews => {
@@ -1016,7 +1022,7 @@
 
     function displayReviews(movieId, reviews) {
       const reviewsList = document.getElementById(`reviewsList-${movieId}`);
-      
+
       if (reviews.length === 0) {
         reviewsList.innerHTML = '<div class="no-reviews">No reviews yet. Be the first to review!</div>';
         return;
@@ -1050,17 +1056,17 @@
             const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
             const ratingElement = document.getElementById(`avgRating-${movieId}`);
             const starsElement = document.getElementById(`avgRatingStars-${movieId}`);
-            
+
             if (ratingElement) {
               ratingElement.textContent = avgRating.toFixed(1);
             }
-            
+
             if (starsElement) {
               // Display star rating for average
               const fullStars = Math.floor(avgRating);
               const hasHalfStar = avgRating % 1 >= 0.5;
               let starsHTML = '';
-              
+
               for (let i = 1; i <= 5; i++) {
                 if (i <= fullStars) {
                   starsHTML += '<i class="fas fa-star star"></i>';
@@ -1070,7 +1076,7 @@
                   starsHTML += '<i class="far fa-star star"></i>';
                 }
               }
-              
+
               starsElement.innerHTML = starsHTML;
             }
           } else {
@@ -1125,7 +1131,7 @@
       `;
       toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => document.body.removeChild(toast), 300);
@@ -1147,4 +1153,5 @@
     document.head.appendChild(style);
   </script>
 </body>
+
 </html>
