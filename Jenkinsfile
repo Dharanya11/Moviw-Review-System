@@ -12,7 +12,7 @@ stage('Run Docker Container') {
     steps {
         bat 'docker stop movie || exit 0'
         bat 'docker rm movie || exit 0'
-        bat 'docker run -d -p 3001:3000 --name movie movie-review-app'
+        bat 'docker run -d -p 3000:3000 --name movie movie-review-app'
     }
 }
     }
